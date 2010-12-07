@@ -1,3 +1,6 @@
+// http://forum.jquery.com/topic/jquery-reverse-a-collection-of-jquery-elements
+jQuery.fn.reverse = [].reverse;
+
 var InlineOrdering = {
 
     /**
@@ -11,9 +14,18 @@ var InlineOrdering = {
      *
      */
     getOrderables: function(){
-        return jQuery('div.inline-group .inline-related input[name$=id]:not([value=])').parent('.inline-related');
+        var
+            ids,
+            parents
+            ;
+        ids = jQuery('div.inline-group .inline-related input[name$=id]:not([value=])');
+        parents = ids.parent('.inline-related');    // Works for stacked inlines
+        if (parents.length === 0) {
+            parents = ids.parents('.has_original').reverse();  // Works for tabular inlines
+        }
+        return parents;
     },
-    
+
     /**
      * Inits the jQuery UI D&D
      *
@@ -27,11 +39,11 @@ var InlineOrdering = {
             update: InlineOrdering.update
         });
         jQuery("div.inline-group").disableSelection();
-        
+
         jQuery(this).find('div.inline_ordering_position').hide();
         jQuery('.add-row a').click(InlineOrdering.update);
     },
-    
+
     /**
      * Updates the position field
      *
@@ -41,7 +53,7 @@ var InlineOrdering = {
             jQuery(this).find('input[id$=inline_ordering_position]').val(i + 1);
         });
     }
-    
+
 };
 
 jQuery(function(){
